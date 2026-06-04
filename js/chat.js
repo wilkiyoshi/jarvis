@@ -5,8 +5,26 @@
 
 const Chat = (() => {
   const history = [];   // [{role:"user"|"assistant", content:"..."}]
+  const KEY_STORE = "jarvis.anthropicKey";
 
-  function configured() { return !!CONFIG.chat.apiKey; }
+  // A chave fica só no navegador (localStorage), nunca no código/GitHub.
+  function getKey() {
+    return localStorage.getItem(KEY_STORE) || CONFIG.chat.apiKey || "";
+  }
+  function configured() { return !!getKey(); }
+
+  function ensureKey() {
+    if (configured()) return true;
+    const k = prompt(
+      "Cole sua chave da Anthropic (começa com sk-ant-...).\n" +
+      "Ela fica salva apenas neste navegador e nunca vai para o GitHub."
+    );
+    if (k && k.trim().startsWith("sk-ant")) {
+      localStorage.setItem(KEY_STORE, k.trim());
+      return true;
+    }
+    return false;
+  }
 
   async function ask(text) {
     history.push({ role: "user", content: text });
@@ -17,7 +35,7 @@ const Chat = (() => {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
-          "x-api-key": CONFIG.chat.apiKey,
+          "x-api-key": getKey(),
           "anthropic-version": "2023-06-01",
           "anthropic-dangerous-direct-browser-access": "true",
           "content-type": "application/json"
@@ -69,8 +87,8 @@ const Chat = (() => {
     const input = document.getElementById("chat-text-input");
     input?.addEventListener("keydown", e => {
       if (e.key === "Enter" && input.value.trim()) {
-        if (!configured()) {
-          appendBubble("assistant", "Para conversar comigo, configure sua chave da Anthropic em js/config.js → chat.apiKey.");
+        if (!configured() && !ensureKey()) {
+          appendBubble("assistant", "Preciso de uma chave válida da Anthropic (sk-ant-...) para conversar. A chave fica só neste navegador.");
         } else {
           ask(input.value.trim());
         }
