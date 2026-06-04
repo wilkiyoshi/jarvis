@@ -69,9 +69,22 @@ const Weather = (() => {
     }
     try {
       const data = await fetchWeather(loc.lat, loc.lon);
-      return render(data, loc.city);
+      const summary = render(data, loc.city);
+      try { localStorage.setItem("jarvis.wx", JSON.stringify({ t: Date.now(), city: loc.city, data })); } catch (_) {}
+      return summary;
     } catch (e) {
       console.warn("Erro no clima:", e);
+      // tenta mostrar o último clima salvo (até 6h) em vez de erro
+      try {
+        const c = JSON.parse(localStorage.getItem("jarvis.wx") || "null");
+        if (c && Date.now() - c.t < 6 * 3600 * 1000) {
+          const summary = render(c.data, c.city);
+          const hh = new Date(c.t).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+          const d = document.getElementById("wx-desc");
+          d.textContent = d.textContent + " · " + hh;
+          return summary;
+        }
+      } catch (_) {}
       document.getElementById("wx-desc").textContent = "Erro: " + (e.message || e);
       return null;
     }
