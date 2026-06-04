@@ -19,9 +19,7 @@ const Currency = (() => {
   async function fetchFiat(base, symbols) {
     // Frankfurter dá quantos "symbols" por 1 base. Queremos quanto vale 1 symbol em base.
     const url = `https://api.frankfurter.app/latest?from=${base}&to=${symbols.join(",")}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Frankfurter " + res.status);
-    const j = await res.json();
+    const j = await Net.getJSON(url);
     const out = {};
     for (const s of symbols) if (j.rates[s]) out[s] = 1 / j.rates[s]; // valor de 1 unidade em base
     return out;
@@ -30,11 +28,9 @@ const Currency = (() => {
   async function fetchBTC(base) {
     try {
       const vs = base.toLowerCase();
-      const res = await fetch(
+      const j = await Net.getJSON(
         `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${vs}&include_24hr_change=true`
       );
-      if (!res.ok) return null;
-      const j = await res.json();
       return j.bitcoin ? { price: j.bitcoin[vs], change: j.bitcoin[vs + "_24h_change"] } : null;
     } catch (_) { return null; }
   }

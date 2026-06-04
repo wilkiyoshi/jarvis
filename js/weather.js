@@ -23,9 +23,7 @@ const Weather = (() => {
       `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
       `&timezone=auto&forecast_days=4`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Open-Meteo " + res.status);
-    return res.json();
+    return Net.getJSON(url);
   }
 
   function render(data, cityName) {
