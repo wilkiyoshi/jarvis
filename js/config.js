@@ -5,7 +5,7 @@
 
 const CONFIG = {
   // Nome do usuário (J.A.R.V.I.S. vai te chamar assim)
-  userName: "Senhor",
+  userName: "Senhor Will",
 
   // Idioma das falas e da síntese de voz
   lang: "pt-BR",
