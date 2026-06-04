@@ -38,7 +38,7 @@ const Wake = (() => {
     // pega o que vem depois da palavra de ativação
     const after = text.split(phrase).pop().trim().replace(/^[,.\s]+/, "");
     if (after.length > 1) {
-      Assistant.handle(after);          // ex.: "jarvis, como está o tempo"
+      Assistant.ask(after);             // ex.: "jarvis, como está o tempo" -> IA
     } else {
       Voice.speak(`Sim, ${CONFIG.userName}?`);  // só chamou o nome
     }

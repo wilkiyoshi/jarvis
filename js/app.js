@@ -30,7 +30,7 @@
     if (input) {
       input.addEventListener("keydown", e => {
         if (e.key === "Enter" && input.value.trim()) {
-          Assistant.handle(input.value);
+          Assistant.ask(input.value);
           input.value = "";
         }
       });

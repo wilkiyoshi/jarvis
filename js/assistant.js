@@ -113,6 +113,37 @@ const Assistant = (() => {
     return Voice.speak("Briefing concluído. Estou às ordens.");
   }
 
+  // ---- Contexto do painel para a IA ------------------------------
+  function buildContext() {
+    const m = memory, parts = [];
+    parts.push("Data e hora atuais: " + new Date().toLocaleString("pt-BR"));
+    if (m.weather) parts.push(`Clima agora: ${m.weather.d}, ${m.weather.temp}°C (sensação ${m.weather.feels}°C).`);
+    if (m.currency) {
+      const c = m.currency;
+      const pc = Object.keys(c).map(k => `${k} R$ ${typeof c[k] === "number" ? c[k].toFixed(2) : c[k]}`).join(", ");
+      if (pc) parts.push("Cotações em BRL: " + pc + ".");
+    }
+    if (m.news && m.news.length) parts.push("Manchetes do dia: " + m.news.slice(0, 5).map(n => n.title).join(" | "));
+    if (m.ai && m.ai.length) parts.push("Tendências de IA: " + m.ai.slice(0, 5).map(n => n.title).join(" | "));
+    if (m.events && m.events.length) parts.push("Eventos próximos: " + m.events.slice(0, 5).map(e => e.name).join(" | "));
+    const pend = (typeof Tasks !== "undefined" && Tasks.pending) ? Tasks.pending() : [];
+    if (pend.length) parts.push("Lembretes pendentes: " + pend.map(t => t.text).join(", ") + ".");
+    return parts.join("\n");
+  }
+
+  // ---- Pergunta livre: responde com a IA (Claude) ----------------
+  // Usada pelo campo central, microfone e "Hey Jarvis".
+  async function ask(raw) {
+    const t = (raw || "").trim();
+    if (!t) return;
+    if (typeof Chat !== "undefined" && Chat.configured()) {
+      UI.status("Consultando a IA…");
+      return Chat.ask(t, buildContext());
+    }
+    // Sem chave do Claude: usa o interpretador local e sugere configurar a IA.
+    return handle(t);
+  }
+
   // ---- Reconhecimento de voz -------------------------------------
   function initSpeech() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -126,7 +157,7 @@ const Assistant = (() => {
     recognition.onerror = () => { listening = false; UI.setListening(false); };
     recognition.onresult = e => {
       const text = e.results[0][0].transcript;
-      handle(text);
+      ask(text);
     };
     return true;
   }
@@ -139,5 +170,5 @@ const Assistant = (() => {
     try { recognition.start(); } catch (_) {}
   }
 
-  return { handle, listen, briefing, remember, aiPick };
+  return { handle, ask, buildContext, listen, briefing, remember, aiPick };
 })();

@@ -26,10 +26,13 @@ const Chat = (() => {
     return false;
   }
 
-  async function ask(text) {
+  async function ask(text, context) {
     history.push({ role: "user", content: text });
     appendBubble("user", text);
     const thinking = appendBubble("assistant", "…");
+    const system = context
+      ? CONFIG.chat.system + "\n\nDados atuais do painel (use se a pergunta for relacionada):\n" + context
+      : CONFIG.chat.system;
 
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -43,7 +46,7 @@ const Chat = (() => {
         body: JSON.stringify({
           model: CONFIG.chat.model,
           max_tokens: CONFIG.chat.maxTokens,
-          system: CONFIG.chat.system,
+          system: system,
           messages: history
         })
       });
@@ -88,9 +91,10 @@ const Chat = (() => {
     input?.addEventListener("keydown", e => {
       if (e.key === "Enter" && input.value.trim()) {
         if (!configured() && !ensureKey()) {
-          appendBubble("assistant", "Preciso de uma chave válida da Anthropic (sk-ant-...) para conversar. A chave fica só neste navegador.");
+          appendBubble("assistant", "Preciso de uma chave válida da Anthropic (sk-ant-...) para conversar. Configure em ⚙ ou cole aqui.");
         } else {
-          ask(input.value.trim());
+          const ctx = (typeof Assistant !== "undefined" && Assistant.buildContext) ? Assistant.buildContext() : undefined;
+          ask(input.value.trim(), ctx);
         }
         input.value = "";
       }
