@@ -24,6 +24,7 @@
     <div class="top-controls">
       <button id="brief-btn" class="hud-btn" title="Briefing do dia">⊹ BRIEFING</button>
       <button id="chat-btn" class="hud-btn" title="Conversar com a IA">⌬ CHAT</button>
+      <button id="settings-btn" class="hud-btn icon" title="Configurações (chaves de API)">⚙</button>
       <button id="wake-btn" class="hud-btn icon" title='Palavra de ativação "Hey Jarvis"'>👂</button>
       <button id="voice-btn" class="hud-btn icon" title="Voz ligada">🔊</button>
       <button id="mic-btn" class="hud-btn icon" title="Falar com o Jarvis">🎙️</button>
@@ -145,6 +146,31 @@
     </div>
   </div>
 
+  <!-- ===================== OVERLAY DE CONFIGURAÇÕES ===================== -->
+  <div id="settings-overlay" class="chat-overlay">
+    <div class="chat-window panel settings-window">
+      <div class="panel-title chat-head">
+        <span>⚙ Configurações — Chaves de API</span>
+        <button id="settings-close" class="chat-close" title="Fechar">✕</button>
+      </div>
+      <div class="settings-body">
+        <label class="set-label">🔊 Chave ElevenLabs <span>(voz do Optimus Prime)</span></label>
+        <input id="set-eleven" class="task-input" type="password" autocomplete="off" placeholder="cole aqui sua chave da ElevenLabs" />
+
+        <label class="set-label">⌬ Chave Claude / Anthropic <span>(chat com IA)</span></label>
+        <input id="set-claude" class="task-input" type="password" autocomplete="off" placeholder="sk-ant-..." />
+
+        <label class="set-show"><input type="checkbox" id="set-toggle" /> Mostrar chaves</label>
+        <div id="set-status" class="status-line"></div>
+        <div class="set-actions">
+          <button id="set-save" class="hud-btn">SALVAR</button>
+          <button id="set-clear" class="hud-btn">LIMPAR</button>
+        </div>
+        <p class="set-note">As chaves ficam salvas apenas neste navegador (localStorage) e nunca são enviadas ao GitHub.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/config.js"></script>
   <script src="js/net.js"></script>
@@ -157,6 +183,7 @@
   <script src="js/news.js"></script>
   <script src="js/events.js"></script>
   <script src="js/tasks.js"></script>
+  <script src="js/settings.js"></script>
   <script src="js/chat.js"></script>
   <script src="js/wake.js"></script>
   <script src="js/assistant.js"></script>

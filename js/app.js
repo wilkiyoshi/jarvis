@@ -52,6 +52,7 @@
     UI.status("Inicializando núcleo J.A.R.V.I.S. ...");
     Clock.start();
     Tasks.init();
+    Settings.init();
     Chat.init();
     Wake.init();
     UI.startSystemMonitor();

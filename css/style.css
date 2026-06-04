@@ -291,6 +291,15 @@ body {
   color: #fff; font-family: "Rajdhani"; font-size: 15px; }
 #chat-text-input::placeholder { color: var(--muted); }
 
+/* ===================== CONFIGURAÇÕES ===================== */
+.settings-window { height: auto; max-height: 86vh; }
+.settings-body { display: flex; flex-direction: column; gap: 8px; }
+.set-label { font-size: 13px; color: var(--cyan); letter-spacing: 1px; margin-top: 6px; }
+.set-label span { color: var(--muted); font-size: 11px; }
+.set-show { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--cyan-soft); margin-top: 4px; }
+.set-actions { display: flex; gap: 10px; margin-top: 6px; }
+.set-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+
 /* scrollbars */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: rgba(41,227,255,0.4); border-radius: 3px; }
