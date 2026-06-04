@@ -1,0 +1,17 @@
+{
+  "name": "J.A.R.V.I.S. — Assistente Pessoal",
+  "short_name": "JARVIS",
+  "description": "Painel pessoal estilo Iron Man: voz, clima, cotações, notícias e IA.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#02060d",
+  "theme_color": "#02060d",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
