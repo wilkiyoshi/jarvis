@@ -14,15 +14,25 @@ const CONFIG = {
   //  VOZ — estilo Optimus Prime
   // ---------------------------------------------------------------
   voice: {
-    // "google"   -> Google Translate TTS (grátis, sem chave) — PADRÃO
+    // "gcloud"   -> Google Cloud TTS (voz MASCULINA pt-BR; precisa de chave grátis) — PADRÃO
+    // "google"   -> Google Translate TTS (grátis, sem chave; voz feminina)
     // "browser"  -> Web Speech API (voz do sistema)
-    // "eleven"   -> ElevenLabs (voz autêntica do Optimus Prime, precisa de chave)
-    engine: "google",
+    // "eleven"   -> ElevenLabs (voz do Optimus Prime; precisa de chave)
+    engine: "gcloud",
 
-    // Google Translate TTS (grátis). Tom mais grave/lento = mais "Optimus".
+    // Google Cloud TTS — voz masculina, velocidade normal.
+    // Sem a chave salva em ⚙, cai automaticamente na voz grátis (Translate).
+    gcloud: {
+      languageCode: "pt-BR",
+      voiceName: "pt-BR-Wavenet-B",  // masculina (alt.: pt-BR-Neural2-B, pt-BR-Standard-B)
+      rate: 1.0,                     // velocidade normal
+      pitch: -2.0                    // levemente mais grave (0 = neutro)
+    },
+
+    // Google Translate TTS (grátis, sem chave). Voz feminina, velocidade normal.
     google: {
       lang: "pt-BR",
-      rate: 0.84   // < 1 deixa a voz mais grave e lenta
+      rate: 1.0
     },
 
     // Parâmetros da voz do navegador (tom grave e cadência lenta = Optimus)

@@ -6,12 +6,15 @@
 const Settings = (() => {
   const E_KEY = "jarvis.elevenKey";       // mesma chave usada por voice.js
   const A_KEY = "jarvis.anthropicKey";    // mesma chave usada por chat.js
+  const G_KEY = "jarvis.gcloudKey";       // mesma chave usada por voice.js (gcloud)
 
   function fill() {
     const e = document.getElementById("set-eleven");
     const a = document.getElementById("set-claude");
+    const g = document.getElementById("set-gcloud");
     if (e) e.value = localStorage.getItem(E_KEY) || "";
     if (a) a.value = localStorage.getItem(A_KEY) || "";
+    if (g) g.value = localStorage.getItem(G_KEY) || "";
   }
 
   function status(t) {
@@ -29,8 +32,10 @@ const Settings = (() => {
   function save() {
     const e = (document.getElementById("set-eleven").value || "").trim();
     const a = (document.getElementById("set-claude").value || "").trim();
+    const g = (document.getElementById("set-gcloud").value || "").trim();
     e ? localStorage.setItem(E_KEY, e) : localStorage.removeItem(E_KEY);
     a ? localStorage.setItem(A_KEY, a) : localStorage.removeItem(A_KEY);
+    g ? localStorage.setItem(G_KEY, g) : localStorage.removeItem(G_KEY);
     status("Chaves salvas neste navegador.");
     setTimeout(close, 900);
   }
@@ -38,6 +43,7 @@ const Settings = (() => {
   function clearAll() {
     localStorage.removeItem(E_KEY);
     localStorage.removeItem(A_KEY);
+    localStorage.removeItem(G_KEY);
     fill();
     status("Chaves removidas.");
   }
@@ -51,8 +57,10 @@ const Settings = (() => {
       const type = ev.target.checked ? "text" : "password";
       const e = document.getElementById("set-eleven");
       const a = document.getElementById("set-claude");
+      const g = document.getElementById("set-gcloud");
       if (e) e.type = type;
       if (a) a.type = type;
+      if (g) g.type = type;
     });
   }
 

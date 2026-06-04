@@ -144,9 +144,9 @@ const Voice = (() => {
     return out;
   }
 
-  async function playBuffer(buf) {
+  async function playBuffer(buf, rate) {
     const c = audioCtx();
-    const rate = (CONFIG.voice.google && CONFIG.voice.google.rate) || 0.85;
+    rate = rate || 1.0;
     if (c) {
       if (c.state === "suspended") { try { await c.resume(); } catch (_) {} }
       const ab = await c.decodeAudioData(buf.slice(0));
@@ -170,12 +170,50 @@ const Voice = (() => {
         const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob` +
           `&tl=${encodeURIComponent(lang)}&q=${encodeURIComponent(ch)}`;
         const buf = await Net.getArrayBuffer(url);
-        await playBuffer(buf);
+        await playBuffer(buf, (CONFIG.voice.google && CONFIG.voice.google.rate) || 1.0);
       }
     } catch (err) {
       console.warn("Falha Google TTS:", err);
       UI.status("Voz Google falhou (" + (err.message || err) + "). Usando voz do navegador.");
       return speakBrowser(text);
+    }
+  }
+
+  // ---- Google Cloud TTS (voz masculina; precisa de chave) ---------
+  function b64ToBuf(b64) {
+    const bin = atob(b64), len = bin.length, bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  async function speakGCloud(text) {
+    const key = localStorage.getItem("jarvis.gcloudKey") || CONFIG.voice.gcloud.apiKey || "";
+    if (!key) return speakGoogle(text);   // sem chave -> voz grátis (Translate)
+    const g = CONFIG.voice.gcloud;
+    try {
+      const res = await fetch(
+        "https://texttospeech.googleapis.com/v1/text:synthesize?key=" + encodeURIComponent(key),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: { text },
+            voice: { languageCode: g.languageCode, name: g.voiceName },
+            audioConfig: { audioEncoding: "MP3", speakingRate: g.rate, pitch: g.pitch }
+          })
+        }
+      );
+      if (!res.ok) {
+        let d = ""; try { d = (await res.text()).slice(0, 160); } catch (_) {}
+        throw new Error("HTTP " + res.status + (d ? " — " + d : ""));
+      }
+      const j = await res.json();
+      if (!j.audioContent) throw new Error("sem áudio");
+      await playBuffer(b64ToBuf(j.audioContent), 1.0);
+    } catch (err) {
+      console.warn("Falha Google Cloud TTS:", err);
+      UI.status("Voz Google Cloud falhou (" + (err.message || err) + "). Usando voz grátis.");
+      return speakGoogle(text);
     }
   }
 
@@ -188,6 +226,7 @@ const Voice = (() => {
       .then(() => { speaking = true; })
       .then(() =>
         engine === "eleven" ? speakEleven(text) :
+        engine === "gcloud" ? speakGCloud(text) :
         engine === "google" ? speakGoogle(text) :
         speakBrowser(text)
       )
