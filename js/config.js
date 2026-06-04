@@ -70,7 +70,7 @@ const CONFIG = {
   //  Crie uma chave em https://console.anthropic.com (API Keys).
   // ---------------------------------------------------------------
   chat: {
-    apiKey: "CHAVE_REMOVIDA",                       // <-- coloque sua chave da Anthropic
+    apiKey: "",                       // <-- coloque sua chave da Anthropic
     model: "claude-sonnet-4-6",       // rápido p/ voz; troque por um Opus se quiser mais profundidade
     maxTokens: 400,
     // Personalidade do assistente
