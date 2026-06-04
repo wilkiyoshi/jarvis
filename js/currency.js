@@ -64,7 +64,7 @@ const Currency = (() => {
       return summary;
     } catch (e) {
       console.warn("Erro nas cotações:", e);
-      list.innerHTML = `<div class="muted">Cotações indisponíveis</div>`;
+      list.innerHTML = `<div class="muted">Erro: ${e.message || e}</div>`;
       return null;
     }
   }

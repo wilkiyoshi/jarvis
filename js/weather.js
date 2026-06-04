@@ -65,7 +65,7 @@ const Weather = (() => {
       return summary;
     } catch (e) {
       console.warn("Erro no clima:", e);
-      document.getElementById("wx-desc").textContent = "Indisponível";
+      document.getElementById("wx-desc").textContent = "Erro: " + (e.message || e);
       return null;
     }
   }

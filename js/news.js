@@ -4,19 +4,36 @@
 // ===================================================================
 
 const News = (() => {
-  const PROXY = "https://api.allorigins.win/raw?url=";
+  // Vários proxies CORS — se um falhar/estiver instável, tenta o próximo.
+  const PROXIES = [
+    u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+    u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
+    u => "https://thingproxy.freeboard.io/fetch/" + u
+  ];
 
-  async function fetchRSS(rssUrl, limit = 8) {
-    const res = await fetch(PROXY + encodeURIComponent(rssUrl));
-    if (!res.ok) throw new Error("RSS " + res.status);
-    const xml = new DOMParser().parseFromString(await res.text(), "text/xml");
-    return [...xml.querySelectorAll("item")].slice(0, limit).map(item => {
+  function parseItems(text, limit) {
+    const xml = new DOMParser().parseFromString(text, "text/xml");
+    const items = [...xml.querySelectorAll("item")];
+    if (!items.length) throw new Error("feed vazio");
+    return items.slice(0, limit).map(item => {
       const title = item.querySelector("title")?.textContent || "";
       const link = item.querySelector("link")?.textContent || "#";
       const source = item.querySelector("source")?.textContent || "";
       const pub = item.querySelector("pubDate")?.textContent || "";
       return { title: title.replace(/ - [^-]+$/, ""), link, source, pub };
     });
+  }
+
+  async function fetchRSS(rssUrl, limit = 8) {
+    let lastErr;
+    for (const make of PROXIES) {
+      try {
+        const res = await fetch(make(rssUrl));
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return parseItems(await res.text(), limit);
+      } catch (e) { lastErr = e; }
+    }
+    throw lastErr || new Error("todos os proxies falharam");
   }
 
   function googleNews(query) {
@@ -37,7 +54,7 @@ const News = (() => {
       return items;
     } catch (e) {
       console.warn("Erro nas notícias:", e);
-      box.innerHTML = `<div class="muted">Notícias indisponíveis</div>`;
+      box.innerHTML = `<div class="muted">Erro: ${e.message || e}</div>`;
       return [];
     }
   }
@@ -55,7 +72,7 @@ const News = (() => {
       return items;
     } catch (e) {
       console.warn("Erro nas notícias de IA:", e);
-      box.innerHTML = `<div class="muted">Indisponível</div>`;
+      box.innerHTML = `<div class="muted">Erro: ${e.message || e}</div>`;
       return [];
     }
   }
