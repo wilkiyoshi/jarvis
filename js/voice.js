@@ -7,6 +7,7 @@ const Voice = (() => {
   let voices = [];
   let chosenVoice = null;
   let enabled = true;
+  let speaking = false;
   let queue = Promise.resolve();
 
   function loadVoices() {
@@ -78,9 +79,12 @@ const Voice = (() => {
     if (!enabled || !text) return Promise.resolve();
     UI.subtitle(text);
     // fila para não sobrepor falas
-    queue = queue.then(() =>
-      CONFIG.voice.engine === "eleven" ? speakEleven(text) : speakBrowser(text)
-    );
+    queue = queue
+      .then(() => { speaking = true; })
+      .then(() =>
+        CONFIG.voice.engine === "eleven" ? speakEleven(text) : speakBrowser(text)
+      )
+      .then(() => { speaking = false; });
     return queue;
   }
 
@@ -91,6 +95,7 @@ const Voice = (() => {
   }
 
   function isEnabled() { return enabled; }
+  function isSpeaking() { return speaking; }
 
-  return { speak, toggle, isEnabled, loadVoices };
+  return { speak, toggle, isEnabled, isSpeaking, loadVoices };
 })();

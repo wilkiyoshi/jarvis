@@ -65,6 +65,30 @@ const CONFIG = {
     ticketmasterApiKey: ""   // <-- opcional. Sem chave, mostra feriados/datas.
   },
 
+  // ---------------------------------------------------------------
+  //  CHAT COM CLAUDE (IA) — perguntas abertas faladas
+  //  Crie uma chave em https://console.anthropic.com (API Keys).
+  // ---------------------------------------------------------------
+  chat: {
+    apiKey: "",                       // <-- coloque sua chave da Anthropic
+    model: "claude-sonnet-4-6",       // rápido p/ voz; troque por um Opus se quiser mais profundidade
+    maxTokens: 400,
+    // Personalidade do assistente
+    system:
+      "Você é J.A.R.V.I.S., o assistente pessoal do estilo Homem de Ferro. " +
+      "Responda em português do Brasil, de forma educada, concisa e direta, " +
+      "tratando o usuário por 'Senhor'. Suas respostas serão lidas em voz alta, " +
+      "então evite listas longas, markdown e use frases curtas e naturais."
+  },
+
+  // ---------------------------------------------------------------
+  //  PALAVRA DE ATIVAÇÃO ("Hey Jarvis")
+  // ---------------------------------------------------------------
+  wakeWord: {
+    enabled: false,                   // ligue pelo botão no topo ou deixe true
+    phrases: ["jarvis", "hey jarvis", "ei jarvis", "ô jarvis", "rivis"]
+  },
+
   // Atualizações automáticas (em minutos)
   refresh: {
     weatherMin: 15,

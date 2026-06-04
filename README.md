@@ -51,7 +51,25 @@ Para a **voz autêntica e realista** do Optimus Prime:
 | "briefing" / "me atualize"            | resumo completo do dia |
 | "ajuda"                               | lista o que ele faz |
 
-Botões no topo: **Briefing**, ligar/desligar **voz** 🔊 e **microfone** 🎙️.
+Botões no topo: **Briefing**, **Chat** ⌬, **palavra de ativação** 👂,
+ligar/desligar **voz** 🔊 e **microfone** 🎙️.
+
+### 💬 Chat com Claude (IA)
+
+Clique em **⌬ CHAT** para conversar com a IA por texto ou voz — as respostas são
+faladas pelo Jarvis. Perguntas abertas digitadas na barra de comando principal
+também são encaminhadas à IA quando ela está configurada.
+
+1. Gere uma chave em [console.anthropic.com](https://console.anthropic.com) → API Keys.
+2. Em `js/config.js` → `chat.apiKey: "SUA_CHAVE"` (e, se quiser, ajuste `chat.model`).
+
+> A chave fica no navegador (uso pessoal). Para produção, prefira um backend.
+
+### 👂 Palavra de ativação "Hey Jarvis"
+
+Clique no botão 👂 (ou deixe `wakeWord.enabled: true` em `config.js`) para o Jarvis
+escutar continuamente. Diga **"Hey Jarvis, como está o tempo"** e ele executa o
+comando. A escuta é pausada enquanto ele fala, para não se autoativar.
 
 ## 🔌 APIs usadas (todas gratuitas)
 
@@ -75,11 +93,11 @@ Botões no topo: **Briefing**, ligar/desligar **voz** 🔊 e **microfone** 🎙�
 ## 💡 Recursos sugeridos para evoluir seu painel
 
 Já incluídos: monitor de sistema, reator/relógio animado, lembretes, ticker de
-notícias, briefing falado. Próximas ideias de alto valor:
+notícias, briefing falado, **chat com Claude** e **palavra de ativação "Hey Jarvis"**.
+Próximas ideias de alto valor:
 
 - **Integração com agenda/Google Calendar** (eventos reais seus).
 - **Mercado financeiro**: índices (Ibovespa, S&P 500) e suas ações favoritas.
-- **Palavra de ativação** ("Hey Jarvis") com escuta contínua.
 - **Resumo de e-mails / Gmail** e clima de trânsito no trajeto.
 - **Pomodoro / modo foco** com a voz marcando os blocos.
 - **Integração com casa inteligente** (luzes, temperatura) via webhooks.
@@ -100,6 +118,8 @@ js/currency.js       cotações (Frankfurter + CoinGecko)
 js/news.js           notícias e tendências de IA
 js/events.js         eventos e feriados
 js/tasks.js          lembretes
+js/chat.js           chat com a IA (Claude/Anthropic)
+js/wake.js           palavra de ativação "Hey Jarvis"
 js/geo.js            localização
 js/clock.js          data e hora
 js/ui.js             utilidades de interface

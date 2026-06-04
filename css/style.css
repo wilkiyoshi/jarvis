@@ -259,6 +259,38 @@ body {
   font-size: 14px; animation: ticker 50s linear infinite; }
 @keyframes ticker { to { transform: translateX(-100%); } }
 
+/* botão de wake word ativo */
+.hud-btn.active { background: var(--cyan); color: #02060d; box-shadow: var(--glow); animation: blink 2s infinite; }
+
+/* ===================== OVERLAY DE CHAT ===================== */
+.chat-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(2, 6, 13, 0.78); backdrop-filter: blur(4px);
+}
+.chat-overlay.show { display: flex; }
+.chat-window {
+  width: min(680px, 92vw); height: min(70vh, 640px);
+  flex: none; display: flex; flex-direction: column;
+  box-shadow: 0 0 50px rgba(41,227,255,0.35);
+}
+.chat-head { display: flex; align-items: center; justify-content: space-between; }
+.chat-close { background: none; border: 1px solid var(--line); color: var(--cyan);
+  cursor: pointer; width: 26px; height: 26px; line-height: 1; }
+.chat-close:hover { background: var(--down); color: #fff; }
+.chat-log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; }
+.chat-bubble { display: flex; flex-direction: column; gap: 2px; max-width: 82%; padding: 8px 12px;
+  border: 1px solid var(--line); border-radius: 8px; }
+.chat-bubble.user { align-self: flex-end; background: rgba(41,227,255,0.12); }
+.chat-bubble.assistant { align-self: flex-start; background: rgba(4,36,63,0.6); }
+.chat-who { font-family: "Orbitron"; font-size: 10px; letter-spacing: 1px; color: var(--cyan); text-transform: uppercase; }
+.chat-text { font-size: 15px; color: #fff; line-height: 1.35; }
+.chat-input-bar { display: flex; align-items: center; gap: 8px; margin-top: 10px;
+  border: 1px solid var(--line); background: rgba(4,36,63,0.5); padding: 8px 12px; }
+#chat-text-input { flex: 1; background: transparent; border: none; outline: none;
+  color: #fff; font-family: "Rajdhani"; font-size: 15px; }
+#chat-text-input::placeholder { color: var(--muted); }
+
 /* scrollbars */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: rgba(41,227,255,0.4); border-radius: 3px; }

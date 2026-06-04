@@ -25,6 +25,8 @@
     </div>
     <div class="top-controls">
       <button id="brief-btn" class="hud-btn" title="Briefing do dia">⊹ BRIEFING</button>
+      <button id="chat-btn" class="hud-btn" title="Conversar com a IA">⌬ CHAT</button>
+      <button id="wake-btn" class="hud-btn icon" title='Palavra de ativação "Hey Jarvis"'>👂</button>
       <button id="voice-btn" class="hud-btn icon" title="Voz ligada">🔊</button>
       <button id="mic-btn" class="hud-btn icon" title="Falar com o Jarvis">🎙️</button>
     </div>
@@ -127,6 +129,24 @@
     </div>
   </footer>
 
+  <!-- ===================== OVERLAY DE CHAT COM A IA ===================== -->
+  <div id="chat-overlay" class="chat-overlay">
+    <div class="chat-window panel">
+      <div class="panel-title chat-head">
+        <span>⌬ Conversa com J.A.R.V.I.S.</span>
+        <button id="chat-close" class="chat-close" title="Fechar">✕</button>
+      </div>
+      <div id="chat-log" class="chat-log">
+        <div class="chat-bubble assistant"><span class="chat-who">J.A.R.V.I.S.</span><span class="chat-text">Às ordens, Senhor. Pergunte o que quiser.</span></div>
+      </div>
+      <div class="chat-input-bar">
+        <span class="cmd-prompt">▸</span>
+        <input id="chat-text-input" type="text" autocomplete="off" placeholder="Pergunte qualquer coisa à IA…" />
+        <button class="cmd-mic" onclick="Assistant.listen()" title="Falar">🎙️</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/config.js"></script>
   <script src="js/ui.js"></script>
@@ -138,6 +158,8 @@
   <script src="js/news.js"></script>
   <script src="js/events.js"></script>
   <script src="js/tasks.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/wake.js"></script>
   <script src="js/assistant.js"></script>
   <script src="js/app.js"></script>
 </body>

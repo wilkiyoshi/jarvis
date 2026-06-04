@@ -81,8 +81,16 @@ const Assistant = (() => {
       return Voice.speak("Posso informar horas, clima, cotações, eventos, notícias e novidades de inteligência artificial. Também guardo lembretes e faço um briefing do dia. É só pedir.");
     }
 
-    // fallback
-    return Voice.speak(`Desculpe, ${CONFIG.userName}, não entendi o comando. Diga ajuda para ver o que posso fazer.`);
+    // abrir/usar o chat com a IA explicitamente
+    if (/\b(conversar|chat|pergunta|me explique|o que [ée])\b/.test(t) && typeof Chat !== "undefined" && Chat.configured()) {
+      return Chat.ask(raw);
+    }
+
+    // fallback: se o chat com Claude estiver configurado, manda a pergunta para a IA
+    if (typeof Chat !== "undefined" && Chat.configured()) {
+      return Chat.ask(raw);
+    }
+    return Voice.speak(`Desculpe, ${CONFIG.userName}, não entendi o comando. Diga ajuda para ver o que posso fazer. Para perguntas abertas, configure o chat com a inteligência artificial.`);
   }
 
   function money(n) { return n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
