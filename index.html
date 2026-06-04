@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J.A.R.V.I.S. — Painel Pessoal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="grid-bg"></div>
+
+  <!-- ===================== TOPO ===================== -->
+  <header class="hud-top">
+    <div class="brand">
+      <span class="brand-mark">◢◣</span>
+      <span class="brand-name">J.A.R.V.I.S.</span>
+      <span class="brand-sub">Just A Rather Very Intelligent System</span>
+    </div>
+    <div class="top-center">
+      <div class="gst-label">Galactic Standard Time</div>
+      <div id="gst" class="gst-value">--:--:-- GST</div>
+    </div>
+    <div class="top-controls">
+      <button id="brief-btn" class="hud-btn" title="Briefing do dia">⊹ BRIEFING</button>
+      <button id="voice-btn" class="hud-btn icon" title="Voz ligada">🔊</button>
+      <button id="mic-btn" class="hud-btn icon" title="Falar com o Jarvis">🎙️</button>
+    </div>
+  </header>
+
+  <!-- ===================== CORPO ===================== -->
+  <main class="hud-main">
+
+    <!-- COLUNA ESQUERDA -->
+    <section class="col col-left">
+      <div class="panel" id="panel-system">
+        <div class="panel-title">Sistema</div>
+        <div class="sys-grid">
+          <div class="sys-metric"><span class="sys-label">CPU</span><span id="cpu-val" class="sys-val">--%</span></div>
+          <div class="sys-metric"><span class="sys-label">RAM</span><span id="ram-val" class="sys-val">--%</span></div>
+          <div class="sys-metric"><span class="sys-label">REDE</span><span id="net-val" class="sys-val">-- MB/s</span></div>
+        </div>
+        <svg class="cpu-gauge" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" class="gauge-track" />
+          <circle id="cpu-ring" cx="50" cy="50" r="45" class="gauge-fill"
+                  stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)" />
+        </svg>
+      </div>
+
+      <div class="panel" id="panel-weather">
+        <div class="panel-title">Clima — <span id="wx-city">…</span></div>
+        <div class="wx-now">
+          <span id="wx-icon" class="wx-icon">🌡️</span>
+          <span id="wx-temp" class="wx-temp">--°</span>
+          <span id="wx-desc" class="wx-desc">carregando…</span>
+        </div>
+        <div class="wx-stats">
+          <div><span>Sensação</span><b id="wx-feels">--°</b></div>
+          <div><span>Umidade</span><b id="wx-hum">--%</b></div>
+          <div><span>Vento</span><b id="wx-wind">--</b></div>
+          <div><span>Chuva</span><b id="wx-precip">--</b></div>
+        </div>
+        <div id="wx-forecast" class="wx-forecast"></div>
+      </div>
+
+      <div class="panel" id="panel-currency">
+        <div class="panel-title">Cotações (em <span>BRL</span>)</div>
+        <div id="currency-list" class="currency-list"><div class="muted">carregando…</div></div>
+      </div>
+    </section>
+
+    <!-- COLUNA CENTRAL (reator + relógio) -->
+    <section class="col col-center">
+      <div class="reactor">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-dots"></div>
+        <div class="core">
+          <div id="clock-time" class="clock-time">--:--</div>
+          <div class="clock-secs-wrap"><span id="clock-secs">--</span></div>
+          <div id="clock-date" class="clock-date">…</div>
+        </div>
+      </div>
+      <div id="subtitle" class="subtitle"></div>
+
+      <div class="command-bar">
+        <span class="cmd-prompt">▸</span>
+        <input id="command-input" type="text" autocomplete="off"
+               placeholder="Diga ou digite um comando… (clima, dólar, notícias, novidades de IA, briefing)" />
+        <button class="cmd-mic" onclick="Assistant.listen()" title="Falar">🎙️</button>
+      </div>
+      <div id="status-line" class="status-line">Inicializando…</div>
+    </section>
+
+    <!-- COLUNA DIREITA -->
+    <section class="col col-right">
+      <div class="panel" id="panel-ai">
+        <div class="panel-title">⚡ Inteligência Artificial — Tendências</div>
+        <div id="ai-list" class="news-list"><div class="muted">carregando…</div></div>
+      </div>
+
+      <div class="panel" id="panel-events">
+        <div class="panel-title">Eventos &amp; Agenda</div>
+        <div id="events-list" class="events-list"><div class="muted">carregando…</div></div>
+      </div>
+
+      <div class="panel" id="panel-tasks">
+        <div class="panel-title">Lembretes</div>
+        <input id="task-input" class="task-input" type="text" placeholder="+ Novo lembrete (Enter)" />
+        <div id="tasks-list" class="tasks-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== RODAPÉ (notícias + ticker) ===================== -->
+  <footer class="hud-bottom">
+    <div class="panel news-panel">
+      <div class="panel-title">Feed de Notícias do Dia</div>
+      <div id="news-list" class="news-list horizontal"><div class="muted">carregando…</div></div>
+    </div>
+    <div class="ticker">
+      <span class="ticker-tag">AO VIVO</span>
+      <div class="ticker-track"><span id="ticker-content">Conectando aos feeds…</span></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/geo.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/news.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/assistant.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
