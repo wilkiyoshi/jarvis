@@ -301,4 +301,19 @@ body {
   .hud-main { grid-template-columns: 1fr; height: auto; }
   body { overflow-y: auto; height: auto; }
   .hud-bottom { height: auto; }
+  /* No mobile, o reator + campo de comando vêm primeiro (topo da página) */
+  .col-center { order: -1; }
+  .command-bar { margin-top: 14px; }
+}
+
+/* Telas estreitas: reduz o reator para caber na largura */
+@media (max-width: 480px) {
+  .reactor { width: 280px; height: 280px; }
+  .ring-1 { width: 280px; height: 280px; }
+  .ring-dots { width: 248px; height: 248px; }
+  .ring-2 { width: 222px; height: 222px; }
+  .ring-3 { width: 170px; height: 170px; }
+  .core { width: 144px; height: 144px; }
+  .clock-time { font-size: 38px; }
+  .hud-main { padding: 14px; }
 }
