@@ -5,7 +5,7 @@
 //  Chamadas a APIs/proxies externos NÃO são interceptadas.
 // ===================================================================
 
-const CACHE = "jarvis-v1";
+const CACHE = "jarvis-v2";
 const ASSETS = [
   "./",
   "./index.html",
