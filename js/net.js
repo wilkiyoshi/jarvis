@@ -47,5 +47,21 @@ const Net = (() => {
     throw firstErr || new Error("falha ao obter dados");
   }
 
-  return { getJSON, PROXIES };
+  // baixa conteúdo binário (ex.: áudio TTS) via proxies que preservam bytes
+  async function getArrayBuffer(url) {
+    let err;
+    for (const make of PROXIES.slice(0, 4)) {   // exclui o allorigins/get (embrulha em JSON)
+      try {
+        const r = await fetchT(make(url), 12000);
+        if (r.ok) {
+          const b = await r.arrayBuffer();
+          if (b && b.byteLength > 0) return b;
+        }
+        err = new Error("HTTP " + r.status);
+      } catch (e) { err = e; }
+    }
+    throw err || new Error("falha ao obter áudio");
+  }
+
+  return { getJSON, getArrayBuffer, PROXIES };
 })();

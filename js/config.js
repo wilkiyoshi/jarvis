@@ -14,9 +14,16 @@ const CONFIG = {
   //  VOZ — estilo Optimus Prime
   // ---------------------------------------------------------------
   voice: {
-    // "browser"  -> usa a Web Speech API (grátis, voz grave aproximada)
-    // "eleven"   -> usa ElevenLabs para a voz AUTÊNTICA do Optimus Prime
-    engine: "eleven",
+    // "google"   -> Google Translate TTS (grátis, sem chave) — PADRÃO
+    // "browser"  -> Web Speech API (voz do sistema)
+    // "eleven"   -> ElevenLabs (voz autêntica do Optimus Prime, precisa de chave)
+    engine: "google",
+
+    // Google Translate TTS (grátis). Tom mais grave/lento = mais "Optimus".
+    google: {
+      lang: "pt-BR",
+      rate: 0.84   // < 1 deixa a voz mais grave e lenta
+    },
 
     // Parâmetros da voz do navegador (tom grave e cadência lenta = Optimus)
     browser: {

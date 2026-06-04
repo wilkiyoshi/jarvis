@@ -132,14 +132,64 @@ const Voice = (() => {
     }
   }
 
+  // ---- Google Translate TTS (grátis, sem chave) -------------------
+  function chunkText(text, max) {
+    const words = String(text).split(/\s+/);
+    const out = []; let cur = "";
+    for (const w of words) {
+      if ((cur + " " + w).trim().length > max) { if (cur) out.push(cur.trim()); cur = w; }
+      else cur += " " + w;
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  }
+
+  async function playBuffer(buf) {
+    const c = audioCtx();
+    const rate = (CONFIG.voice.google && CONFIG.voice.google.rate) || 0.85;
+    if (c) {
+      if (c.state === "suspended") { try { await c.resume(); } catch (_) {} }
+      const ab = await c.decodeAudioData(buf.slice(0));
+      const node = c.createBufferSource();
+      node.buffer = ab;
+      node.playbackRate.value = rate;   // < 1 = mais grave e lento
+      node.connect(c.destination);
+      node.start();
+      return new Promise(r => { node.onended = r; });
+    }
+    const url = URL.createObjectURL(new Blob([buf], { type: "audio/mpeg" }));
+    const a = new Audio(url); a.playbackRate = rate;
+    await a.play();
+    return new Promise(r => { a.onended = () => { URL.revokeObjectURL(url); r(); }; });
+  }
+
+  async function speakGoogle(text) {
+    const lang = (CONFIG.voice.google && CONFIG.voice.google.lang) || CONFIG.lang;
+    try {
+      for (const ch of chunkText(text, 190)) {
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob` +
+          `&tl=${encodeURIComponent(lang)}&q=${encodeURIComponent(ch)}`;
+        const buf = await Net.getArrayBuffer(url);
+        await playBuffer(buf);
+      }
+    } catch (err) {
+      console.warn("Falha Google TTS:", err);
+      UI.status("Voz Google falhou (" + (err.message || err) + "). Usando voz do navegador.");
+      return speakBrowser(text);
+    }
+  }
+
   function speak(text) {
     if (!enabled || !text) return Promise.resolve();
     UI.subtitle(text);
+    const engine = CONFIG.voice.engine;
     // fila para não sobrepor falas
     queue = queue
       .then(() => { speaking = true; })
       .then(() =>
-        CONFIG.voice.engine === "eleven" ? speakEleven(text) : speakBrowser(text)
+        engine === "eleven" ? speakEleven(text) :
+        engine === "google" ? speakGoogle(text) :
+        speakBrowser(text)
       )
       .then(() => { speaking = false; });
     return queue;
