@@ -14,11 +14,11 @@ const CONFIG = {
   //  VOZ — estilo Optimus Prime
   // ---------------------------------------------------------------
   voice: {
-    // "gcloud"   -> Google Cloud TTS (voz MASCULINA pt-BR; precisa de chave grátis) — PADRÃO
-    // "google"   -> Google Translate TTS (grátis, sem chave; voz feminina)
+    // "google"   -> Google Translate TTS (grátis, SEM chave; voz feminina) — PADRÃO
+    // "gcloud"   -> Google Cloud TTS (voz masculina pt-BR; precisa de chave grátis)
     // "browser"  -> Web Speech API (voz do sistema)
     // "eleven"   -> ElevenLabs (voz do Optimus Prime; precisa de chave)
-    engine: "gcloud",
+    engine: "google",
 
     // Google Cloud TTS — voz masculina, velocidade normal.
     // Sem a chave salva em ⚙, cai automaticamente na voz grátis (Translate).
