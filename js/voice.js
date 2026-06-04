@@ -46,6 +46,22 @@ const Voice = (() => {
   const ELEVEN_STORE = "jarvis.elevenKey";
   let elevenDeclined = false;
 
+  // ---- Desbloqueio de áudio (autoplay) ----------------------------
+  // O áudio da ElevenLabs chega de forma assíncrona; sem desbloquear no
+  // primeiro gesto do usuário, o navegador barra a reprodução.
+  let actx = null;
+  function audioCtx() {
+    if (!actx) {
+      try { actx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (_) { actx = null; }
+    }
+    return actx;
+  }
+  function unlock() {
+    const c = audioCtx();
+    if (c && c.state === "suspended") c.resume().catch(() => {});
+  }
+
   function elevenKey() {
     return localStorage.getItem(ELEVEN_STORE) || CONFIG.voice.eleven.apiKey || "";
   }
@@ -93,8 +109,19 @@ const Voice = (() => {
         throw new Error("HTTP " + res.status + (detail ? " — " + detail : ""));
       }
       const buf = await res.arrayBuffer();
-      const blob = new Blob([buf], { type: "audio/mpeg" });
-      const url = URL.createObjectURL(blob);
+      // Reproduz via Web Audio (contorna o bloqueio de autoplay assíncrono)
+      const c = audioCtx();
+      if (c) {
+        if (c.state === "suspended") { try { await c.resume(); } catch (_) {} }
+        const audioBuf = await c.decodeAudioData(buf.slice(0));
+        const node = c.createBufferSource();
+        node.buffer = audioBuf;
+        node.connect(c.destination);
+        node.start();
+        return new Promise(r => { node.onended = r; });
+      }
+      // Fallback: elemento de áudio comum
+      const url = URL.createObjectURL(new Blob([buf], { type: "audio/mpeg" }));
       const audio = new Audio(url);
       await audio.play();
       return new Promise(r => { audio.onended = () => { URL.revokeObjectURL(url); r(); }; });
@@ -127,5 +154,5 @@ const Voice = (() => {
   function isEnabled() { return enabled; }
   function isSpeaking() { return speaking; }
 
-  return { speak, toggle, isEnabled, isSpeaking, loadVoices };
+  return { speak, toggle, isEnabled, isSpeaking, loadVoices, unlock };
 })();

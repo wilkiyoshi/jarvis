@@ -68,6 +68,7 @@
 
     // saudação inicial (após interação do usuário o áudio é liberado pelo navegador)
     const greet = () => {
+      Voice.unlock();                 // libera o áudio (autoplay) no 1º gesto
       Assistant.handle("jarvis");
       setTimeout(() => Voice.speak("Recomendação de hoje: " + Assistant.aiPick()), 4000);
       document.removeEventListener("click", greet);
