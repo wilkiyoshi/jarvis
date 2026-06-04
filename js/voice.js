@@ -65,15 +65,20 @@ const Voice = (() => {
   async function speakEleven(text) {
     const e = CONFIG.voice.eleven;
     const key = ensureElevenKey();
-    if (!key || !e.voiceId) return speakBrowser(text);
+    if (!key) {
+      UI.status("Voz ElevenLabs: defina a chave em ⚙ Configurações (usando voz do navegador).");
+      return speakBrowser(text);
+    }
+    if (!e.voiceId) return speakBrowser(text);
     try {
       const res = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${e.voiceId}`,
+        `https://api.elevenlabs.io/v1/text-to-speech/${e.voiceId}?output_format=mp3_44100_128`,
         {
           method: "POST",
           headers: {
             "xi-api-key": key,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg"
           },
           body: JSON.stringify({
             text,
@@ -82,15 +87,20 @@ const Voice = (() => {
           })
         }
       );
-      if (!res.ok) throw new Error("ElevenLabs " + res.status);
+      if (!res.ok) {
+        let detail = "";
+        try { detail = (await res.text()).slice(0, 160); } catch (_) {}
+        throw new Error("HTTP " + res.status + (detail ? " — " + detail : ""));
+      }
       const buf = await res.arrayBuffer();
       const blob = new Blob([buf], { type: "audio/mpeg" });
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       await audio.play();
-      return new Promise(r => (audio.onended = r));
+      return new Promise(r => { audio.onended = () => { URL.revokeObjectURL(url); r(); }; });
     } catch (err) {
-      console.warn("Falha ElevenLabs, usando voz do navegador:", err);
+      console.warn("Falha ElevenLabs:", err);
+      UI.status("Voz ElevenLabs falhou (" + (err.message || err) + "). Usando voz do navegador.");
       return speakBrowser(text);
     }
   }

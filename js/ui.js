@@ -4,12 +4,32 @@
 
 const UI = (() => {
   function subtitle(text) {
+    centerAnswer(text);                 // mostra de forma persistente no centro
     const el = document.getElementById("subtitle");
     if (!el) return;
     el.textContent = "J.A.R.V.I.S.: " + text;
     el.classList.add("show");
     clearTimeout(el._t);
     el._t = setTimeout(() => el.classList.remove("show"), 8000);
+  }
+
+  // Área central persistente de resposta -----------------------------
+  function thinking(question) {
+    const box = document.getElementById("center-response");
+    if (!box) return;
+    box.innerHTML = "";
+    const q = document.createElement("div"); q.className = "cr-q"; q.textContent = question;
+    const a = document.createElement("div"); a.className = "cr-a"; a.textContent = "…";
+    box.appendChild(q); box.appendChild(a);
+  }
+
+  function centerAnswer(text) {
+    const box = document.getElementById("center-response");
+    if (!box) return;
+    let a = box.querySelector(".cr-a");
+    if (!a) { box.innerHTML = ""; a = document.createElement("div"); a.className = "cr-a"; box.appendChild(a); }
+    a.textContent = text;
+    box.scrollTop = box.scrollHeight;
   }
 
   function status(text) {
@@ -41,5 +61,5 @@ const UI = (() => {
     setInterval(up, 2000);
   }
 
-  return { subtitle, status, setListening, startSystemMonitor };
+  return { subtitle, thinking, centerAnswer, status, setListening, startSystemMonitor };
 })();

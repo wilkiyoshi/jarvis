@@ -30,6 +30,7 @@ const Chat = (() => {
     history.push({ role: "user", content: text });
     appendBubble("user", text);
     const thinking = appendBubble("assistant", "…");
+    UI.thinking(text);   // mostra a pergunta + "pensando" no centro da tela
     const system = context
       ? CONFIG.chat.system + "\n\nDados atuais do painel (use se a pergunta for relacionada):\n" + context
       : CONFIG.chat.system;
