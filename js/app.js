@@ -69,6 +69,12 @@
     // saudação inicial (após interação do usuário o áudio é liberado pelo navegador)
     const greet = () => {
       Voice.unlock();                 // libera o áudio (autoplay) no 1º gesto
+      // Se a voz é ElevenLabs mas não há chave salva, abre as configurações.
+      if (CONFIG.voice.engine === "eleven" &&
+          !localStorage.getItem("jarvis.elevenKey") && !CONFIG.voice.eleven.apiKey) {
+        UI.status("Para a voz do Optimus, salve sua chave ElevenLabs em ⚙ Configurações.");
+        if (typeof Settings !== "undefined") Settings.open();
+      }
       Assistant.handle("jarvis");
       setTimeout(() => Voice.speak("Recomendação de hoje: " + Assistant.aiPick()), 4000);
       document.removeEventListener("click", greet);

@@ -24,7 +24,9 @@ const Weather = (() => {
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
       `&timezone=auto&forecast_days=4`;
     try {
-      return await Net.getJSON(url);
+      const d = await Net.getJSON(url);
+      if (d && d.current && d.daily) return d;     // valida estrutura do Open-Meteo
+      throw new Error("resposta inválida do Open-Meteo");
     } catch (e) {
       // fonte alternativa: wttr.in (domínio diferente, formato próprio)
       const j = await Net.getJSON(`https://wttr.in/${lat},${lon}?format=j1`);
@@ -47,6 +49,9 @@ const Weather = (() => {
   }
 
   function adaptWttr(j) {
+    if (!j || !j.current_condition || !j.current_condition[0]) {
+      throw new Error("resposta inválida do wttr.in");
+    }
     const cur = j.current_condition[0];
     const data = {
       current: {
@@ -70,6 +75,7 @@ const Weather = (() => {
   }
 
   function render(data, cityName) {
+    if (!data || !data.current || !data.daily) throw new Error("dados de clima incompletos");
     const c = data.current;
     const [d, icon] = desc(c.weather_code);
     document.getElementById("wx-city").textContent = cityName || "Local atual";
