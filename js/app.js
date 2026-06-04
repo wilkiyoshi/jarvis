@@ -58,15 +58,11 @@
     wireControls();
     Voice.loadVoices();
 
-    // carrega os dados em paralelo
+    // carrega em sequência para não sobrecarregar os proxies ao mesmo tempo
     UI.status("Sincronizando módulos...");
-    await Promise.allSettled([
-      refreshWeather(),
-      refreshCurrency(),
-      refreshNews(),
-      refreshAI(),
-      refreshEvents()
-    ]);
+    for (const job of [refreshCurrency, refreshWeather, refreshEvents, refreshNews, refreshAI]) {
+      try { await job(); } catch (_) {}
+    }
     UI.status("Todos os sistemas operacionais.");
 
     // saudação inicial (após interação do usuário o áudio é liberado pelo navegador)

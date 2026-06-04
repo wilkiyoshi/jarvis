@@ -16,7 +16,7 @@ const CONFIG = {
   voice: {
     // "browser"  -> usa a Web Speech API (grátis, voz grave aproximada)
     // "eleven"   -> usa ElevenLabs para a voz AUTÊNTICA do Optimus Prime
-    engine: "browser",
+    engine: "eleven",
 
     // Parâmetros da voz do navegador (tom grave e cadência lenta = Optimus)
     browser: {
@@ -31,8 +31,9 @@ const CONFIG = {
     // Crie uma conta gratuita em https://elevenlabs.io, gere uma API key
     // e clone/escolha uma voz do Optimus Prime na biblioteca.
     eleven: {
-      apiKey: "",            // <-- coloque sua chave aqui
-      voiceId: "",           // <-- coloque o ID da voz Optimus Prime
+      // A chave NÃO fica aqui: o painel pede no navegador e guarda só localmente.
+      apiKey: "",
+      voiceId: "aU2vcrnwi348Gnc2Y1si",   // voz fixada (Optimus Prime)
       modelId: "eleven_multilingual_v2"
     }
   },

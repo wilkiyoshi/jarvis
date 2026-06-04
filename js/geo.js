@@ -28,7 +28,7 @@ const Geo = (() => {
       navigator.geolocation.getCurrentPosition(
         p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
         err => reject(err),
-        { timeout: 8000, maximumAge: 600000 }
+        { timeout: 5000, maximumAge: 600000 }
       );
     });
   }

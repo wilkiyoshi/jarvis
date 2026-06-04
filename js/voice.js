@@ -43,16 +43,36 @@ const Voice = (() => {
     });
   }
 
+  const ELEVEN_STORE = "jarvis.elevenKey";
+  let elevenDeclined = false;
+
+  function elevenKey() {
+    return localStorage.getItem(ELEVEN_STORE) || CONFIG.voice.eleven.apiKey || "";
+  }
+  function ensureElevenKey() {
+    let k = elevenKey();
+    if (k) return k;
+    if (elevenDeclined) return "";
+    k = prompt(
+      "Cole sua chave da ElevenLabs (para a voz do Optimus Prime).\n" +
+      "Ela fica salva apenas neste navegador e nunca vai para o GitHub."
+    );
+    if (k && k.trim()) { localStorage.setItem(ELEVEN_STORE, k.trim()); return k.trim(); }
+    elevenDeclined = true;
+    return "";
+  }
+
   async function speakEleven(text) {
     const e = CONFIG.voice.eleven;
-    if (!e.apiKey || !e.voiceId) return speakBrowser(text);
+    const key = ensureElevenKey();
+    if (!key || !e.voiceId) return speakBrowser(text);
     try {
       const res = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${e.voiceId}`,
         {
           method: "POST",
           headers: {
-            "xi-api-key": e.apiKey,
+            "xi-api-key": key,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
