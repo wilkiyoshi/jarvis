@@ -56,11 +56,20 @@ const Weather = (() => {
   }
 
   async function update() {
+    // localização não pode travar nem derrubar o clima: se falhar, usa fallback
+    let loc;
     try {
-      const loc = await Geo.get();
+      loc = await Geo.get();
+    } catch (_) {
+      loc = {
+        lat: CONFIG.location.fallbackLat,
+        lon: CONFIG.location.fallbackLon,
+        city: CONFIG.location.fallbackCity
+      };
+    }
+    try {
       const data = await fetchWeather(loc.lat, loc.lon);
-      const summary = render(data, loc.city);
-      return summary;
+      return render(data, loc.city);
     } catch (e) {
       console.warn("Erro no clima:", e);
       document.getElementById("wx-desc").textContent = "Erro: " + (e.message || e);

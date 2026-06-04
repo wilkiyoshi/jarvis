@@ -6,6 +6,7 @@
 const News = (() => {
   // Vários proxies CORS — se um falhar/estiver instável, tenta o próximo.
   const PROXIES = [
+    u => "https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u),
     u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
     u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
     u => "https://thingproxy.freeboard.io/fetch/" + u
