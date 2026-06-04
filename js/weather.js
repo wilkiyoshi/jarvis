@@ -23,7 +23,50 @@ const Weather = (() => {
       `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
       `&timezone=auto&forecast_days=4`;
-    return Net.getJSON(url);
+    try {
+      return await Net.getJSON(url);
+    } catch (e) {
+      // fonte alternativa: wttr.in (domínio diferente, formato próprio)
+      const j = await Net.getJSON(`https://wttr.in/${lat},${lon}?format=j1`);
+      return adaptWttr(j);
+    }
+  }
+
+  // converte códigos WWO (wttr.in) para WMO (open-meteo) p/ reusar a tabela
+  function wwoToWmo(c) {
+    const m = {
+      113: 0, 116: 1, 119: 3, 122: 3, 143: 45, 248: 45, 260: 48,
+      176: 80, 263: 51, 266: 53, 281: 51, 284: 53, 293: 61, 296: 61,
+      299: 63, 302: 65, 305: 65, 308: 65, 311: 66, 314: 67,
+      353: 80, 356: 81, 359: 82, 179: 71, 182: 73, 185: 51, 227: 73, 230: 75,
+      317: 73, 320: 73, 323: 71, 326: 71, 329: 73, 332: 73, 335: 75, 338: 75,
+      350: 77, 362: 71, 365: 73, 368: 71, 371: 73, 374: 77, 377: 77,
+      200: 95, 386: 95, 389: 96, 392: 95, 395: 99
+    };
+    return m[+c] != null ? m[+c] : 3;
+  }
+
+  function adaptWttr(j) {
+    const cur = j.current_condition[0];
+    const data = {
+      current: {
+        temperature_2m: +cur.temp_C,
+        apparent_temperature: +cur.FeelsLikeC,
+        relative_humidity_2m: +cur.humidity,
+        weather_code: wwoToWmo(cur.weatherCode),
+        wind_speed_10m: +cur.windspeedKmph,
+        precipitation: +cur.precipMM
+      },
+      daily: { time: [], weather_code: [], temperature_2m_max: [], temperature_2m_min: [] }
+    };
+    (j.weather || []).forEach(d => {
+      const code = (d.hourly && d.hourly[4]) ? d.hourly[4].weatherCode : cur.weatherCode;
+      data.daily.time.push(d.date);
+      data.daily.weather_code.push(wwoToWmo(code));
+      data.daily.temperature_2m_max.push(+d.maxtempC);
+      data.daily.temperature_2m_min.push(+d.mintempC);
+    });
+    return data;
   }
 
   function render(data, cityName) {
